@@ -1,0 +1,25 @@
+import { test, expect } from '@playwright/test';
+
+test('Simple Form Demo Test on LambdaTest', async ({ page }) => {
+  // 1. Open LambdaTest Selenium Playground
+  await page.goto('https://www.lambdatest.com/selenium-playground');
+
+  // 2. Click “Simple Form Demo”
+  await page.locator('a:has-text("Simple Form Demo")').click();
+
+  // 3. Validate that the URL contains “simple-form-demo”
+  await expect(page).toHaveURL(/.*simple-form-demo.*/);
+
+  // 4. Create a variable for a string value
+  const message = 'Welcome to LambdaTest';
+
+  // 5. Enter the value in the “Enter Message” text box
+  await page.fill('input[id="user-message"]', message);
+
+  // 6. Click “Get Checked Value”
+  await page.click('button:has-text("Get Checked Value")');
+
+  // 7. Validate whether the same text message is displayed under “Your Message:”
+  const displayedMessage = page.locator('#message'); // the span showing the message
+  await expect(displayedMessage).toHaveText(message);
+});

@@ -1,0 +1,36 @@
+import { test, expect } from '@playwright/test';
+
+test('Drag & Drop Slider Test on LambdaTest', async ({ page }) => {
+  // 1. Open LambdaTest Selenium Playground
+  await page.goto('https://www.lambdatest.com/selenium-playground');
+
+  // Click “Drag & Drop Sliders”
+  await page.locator('a:has-text("Drag & Drop Sliders")').click();
+
+  // 2. Select the slider with label “Default value 15”
+  const slider = page.locator('input[type="range"][value="15"]');
+
+  // Get the bounding box to calculate drag distance
+  const box = await slider.boundingBox();
+  if (!box) throw new Error('Slider bounding box not found');
+
+  // Slider ranges from 0 to 100, approximate drag distance in pixels
+  const targetValue = 95;
+  const sliderWidth = box.width;
+  const startValue = 15;
+
+  const dragOffsetX = ((targetValue - startValue) / 100) * sliderWidth;
+
+  // Drag the slider handle
+  await slider.dragTo(slider, { targetPosition: { x: dragOffsetX, y: 0 } });
+
+  // Alternatively, use mouse actions if dragTo does not work reliably:
+  // await page.mouse.move(box.x + box.width * startValue / 100, box.y + box.height / 2);
+  // await page.mouse.down();
+  // await page.mouse.move(box.x + box.width * targetValue / 100, box.y + box.height / 2);
+  // await page.mouse.up();
+
+  // Validate the displayed value shows 95
+  const output = page.locator('output#rangeSuccess'); // The output span for slider value
+  await expect(output).toHaveText('95');
+});
